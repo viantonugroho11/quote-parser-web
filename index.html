@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comma & Quote Parser</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 40px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #94a3b8;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      margin-top: 12px;
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 14px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    button {
+      margin-top: 16px;
+      background: #38bdf8;
+      color: #020617;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #1e293b;
+      color: #e5e7eb;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .options {
+      margin-top: 12px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 800px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Comma & Quote Parser</h1>
+  <p>Convert text separated by newline / comma / space into quoted values</p>
+
+  <label>Input</label>
+  <textarea id="input" placeholder="uuid-1\nuuid-2"></textarea>
+
+  <div class="options">
+    <strong>Separators:</strong>
+    <label><input type="checkbox" id="sep-newline" checked /> Newline</label>
+    <label><input type="checkbox" id="sep-comma" checked /> Comma</label>
+    <label><input type="checkbox" id="sep-space" /> Space</label>
+  </div>
+
+  <div class="options">
+    <strong>Options:</strong>
+    <label><input type="checkbox" id="opt-dedupe" /> Auto-remove duplicate</label>
+  </div>
+
+  <div>
+    <button id="btn-double">Double Quotes</button>
+    <button id="btn-single">Single Quotes</button>
+    <button id="btn-backtick">Backticks</button>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>Output</label>
+      <textarea id="output" readonly></textarea>
+      <button class="secondary" id="copy-output">📋 Copy Output</button>
+    </div>
+    <div>
+      <label>JSON Array</label>
+      <textarea id="json" readonly></textarea>
+      <button class="secondary" id="copy-json">📋 Copy JSON</button>
+    </div>
+  </div>
+
+  <footer>
+    Frontend only • Deployable on GitHub Pages
+  </footer>
+
+  <script>
+    window.parseQuotes = function (type) {
+      const raw = document.getElementById('input').value;
+
+      const seps = [];
+      if (document.getElementById('sep-newline').checked) seps.push("\\n");
+      if (document.getElementById('sep-comma').checked) seps.push(",");
+      if (document.getElementById('sep-space').checked) seps.push("\\s");
+
+      const pattern = seps.length ? `[${seps.join('')}] +|[${seps.join('')}]` : "\\n+";
+      const regex = new RegExp(pattern, 'g');
+
+      let items = raw
+        .split(regex)
+        .map(v => v.trim())
+        .filter(Boolean);
+
+      if (document.getElementById('opt-dedupe').checked) {
+        items = Array.from(new Set(items));
+      }
+
+      let q = '"';
+      if (type === 'single') q = "'";
+      if (type === 'backtick') q = '`';
+
+      document.getElementById('output').value = items.map(v => `${q}${v}${q}`).join(',');
+      document.getElementById('json').value = JSON.stringify(items, null, 2);
+    };
+
+    document.getElementById('btn-double').addEventListener('click', () => parseQuotes('double'));
+    document.getElementById('btn-single').addEventListener('click', () => parseQuotes('single'));
+    document.getElementById('btn-backtick').addEventListener('click', () => parseQuotes('backtick'));
+
+    document.getElementById('copy-output').addEventListener('click', () => {
+      navigator.clipboard.writeText(document.getElementById('output').value);
+    });
+
+    document.getElementById('copy-json').addEventListener('click', () => {
+      navigator.clipboard.writeText(document.getElementById('json').value);
+    });
+  </script>
+</body>
+
+</html>
