@@ -1,5 +1,8 @@
 # Comma & Quote Parser
 
+![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen?logo=github)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+
 A simple **frontend-only** web tool to convert text separated by **newline / comma / space** into:
 - Quoted comma-separated values (`"`, `'`, `` ` ``)
 - JSON array
@@ -7,7 +10,7 @@ A simple **frontend-only** web tool to convert text separated by **newline / com
 Designed for developers who often need to quickly format UUIDs, IDs, or raw text for **SQL**, **API payloads**, or **config files**.
 
 🔗 **Live Demo (GitHub Pages)**  
-`https://<your-username>.github.io/<repo-name>/`
+`(https://viantonugroho11.github.io/quote-parser-web/)`
 
 ---
 
